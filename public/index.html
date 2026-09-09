@@ -5,104 +5,30 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Youtuber Extraxt</title>
   <style>
-    /* Twitter/X System Typography & Styling Baseline */
     body {
       margin: 0;
-      font-family: Chirp, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-      background-color: #15202b; /* Twitter Dark Mode Navy */
+      font-family: Chirp, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      background-color: #15202b;
       color: #f7f9fa;
       display: flex;
       justify-content: center;
       align-items: center;
       min-height: 100vh;
     }
-    .container {
-      width: 100%;
-      max-width: 550px;
-      padding: 20px;
-      box-sizing: border-box;
-    }
-    h1 {
-      font-size: 28px;
-      font-weight: 800;
-      margin-bottom: 24px;
-      text-align: center;
-      letter-spacing: -0.5px;
-    }
-    .input-group {
-      display: flex;
-      background: #192734;
-      border: 1px solid #38444d;
-      border-radius: 9999px; /* Rounded pill style */
-      padding: 6px 6px 6px 16px;
-      transition: border-color 0.2s;
-    }
-    .input-group:focus-within {
-      border-color: #1d9bf0; /* Twitter Sky Blue accent */
-    }
-    .input-group input {
-      flex: 1;
-      background: transparent;
-      border: none;
-      outline: none;
-      color: #fff;
-      font-size: 16px;
-    }
-    .input-group input::placeholder {
-      color: #8899a6;
-    }
-    .input-group button {
-      background-color: #1d9bf0;
-      color: #fff;
-      border: none;
-      outline: none;
-      padding: 10px 24px;
-      border-radius: 9999px;
-      font-weight: 700;
-      font-size: 15px;
-      cursor: pointer;
-      transition: background 0.2s;
-    }
-    .input-group button:hover {
-      background-color: #1a8cd8;
-    }
-    /* Dynamic Video Card Component */
-    .preview-card {
-      display: none; /* Hidden by default */
-      background: #192734;
-      border: 1px solid #38444d;
-      border-radius: 16px;
-      margin-top: 20px;
-      overflow: hidden;
-      animation: fadeIn 0.3s ease-out;
-    }
-    @keyframes fadeIn {
-      from { opacity: 0; transform: translateY(10px); }
-      to { opacity: 1; transform: translateY(0); }
-    }
-    .preview-card img {
-      width: 100%;
-      height: auto;
-      aspect-ratio: 16 / 9;
-      object-fit: cover;
-      border-bottom: 1px solid #38444d;
-    }
-    .preview-info {
-      padding: 16px;
-    }
-    .preview-title {
-      font-size: 16px;
-      font-weight: 700;
-      line-height: 1.4;
-      margin: 0;
-      color: #f7f9fa;
-    }
-    .status-msg {
-      text-align: center;
-      margin-top: 12px;
-      color: #8899a6;
-      font-size: 14px;
-    }
+    .container { width: 100%; max-width: 550px; padding: 20px; box-sizing: border-box; }
+    h1 { font-size: 28px; font-weight: 800; margin-bottom: 24px; text-align: center; }
+    .input-group { display: flex; background: #192734; border: 1px solid #38444d; border-radius: 9999px; padding: 6px 6px 6px 16px; }
+    .input-group:focus-within { border-color: #1d9bf0; }
+    .input-group input { flex: 1; background: transparent; border: none; outline: none; color: #fff; font-size: 16px; }
+    .input-group button { background-color: #1d9bf0; color: #fff; border: none; padding: 10px 24px; border-radius: 9999px; font-weight: 700; cursor: pointer; }
+    .input-group button:hover { background-color: #1a8cd8; }
+    .preview-card { display: none; background: #192734; border: 1px solid #38444d; border-radius: 16px; margin-top: 20px; overflow: hidden; }
+    .preview-card img { width: 100%; height: auto; aspect-ratio: 16/9; object-fit: cover; }
+    .preview-info { padding: 16px; display: flex; flex-direction: column; gap: 10px; }
+    .preview-title { font-size: 16px; font-weight: 700; margin: 0; }
+    .action-btn { background-color: #00ba7c; color: white; text-decoration: none; text-align: center; padding: 12px; border-radius: 9999px; font-weight: 700; display: block; }
+    .action-btn:hover { background-color: #00a36c; }
+    .status-msg { text-align: center; margin-top: 12px; color: #8899a6; font-size: 14px; }
   </style>
 </head>
 <body>
@@ -111,65 +37,60 @@
   <h1>Youtuber Extraxt</h1>
   
   <div class="input-group">
-    <input type="text" id="videoUrl" placeholder="Paste YouTube link here..." autocomplete="off">
-    <button id="dlBtn" onclick="triggerDownload()">Download</button>
+    <input type="text" id="videoUrl" placeholder="Paste YouTube link here...">
+    <button onclick="fetchVideoData()">Load Video</button>
   </div>
 
   <div id="status" class="status-msg"></div>
 
-  <!-- Live Render Preview Component -->
   <div id="previewCard" class="preview-card">
-    <img id="previewImg" src="" alt="Thumbnail Preview">
+    <img id="previewImg" src="">
     <div class="preview-info">
-      <h3 id="previewTitle" class="preview-title">Video Title</h3>
+      <h3 id="previewTitle" class="preview-title"></h3>
+      <!-- This button uses the browser's connection directly to get past the cloud block -->
+      <a id="downloadLink" href="" target="_blank" class="action-btn">Download MP4 File</a>
     </div>
   </div>
 </div>
 
 <script>
-  const urlInput = document.getElementById('videoUrl');
-  const previewCard = document.getElementById('previewCard');
-  const previewImg = document.getElementById('previewImg');
-  const previewTitle = document.getElementById('previewTitle');
-  const statusMsg = document.getElementById('status');
+  let cachedDownloadUrl = "";
 
-  // Listen for paste or keyboard actions to automatically load video preview
-  urlInput.addEventListener('input', async () => {
-    const url = urlInput.value.trim();
+  async function fetchVideoData() {
+    const url = document.getElementById('videoUrl').value.trim();
+    const statusMsg = document.getElementById('status');
+    const previewCard = document.getElementById('previewCard');
+
     if (!url) {
-      previewCard.style.display = 'none';
-      statusMsg.innerText = '';
+      statusMsg.innerText = 'Please paste a link first!';
       return;
     }
 
-    statusMsg.innerText = 'Fetching video info...';
-    
+    statusMsg.innerText = 'Extracting stream paths safely...';
+    previewCard.style.display = 'none';
+
     try {
       const response = await fetch(`/meta?url=${encodeURIComponent(url)}`);
-      if (!response.ok) throw new Error();
-      
       const data = await response.json();
-      
-      // Update preview card elements
-      previewImg.src = data.thumbnail;
-      previewTitle.innerText = data.title;
-      previewCard.style.display = 'block';
-      statusMsg.innerText = '';
-    } catch (err) {
-      previewCard.style.display = 'none';
-      statusMsg.innerText = 'Ready to download layout format.';
-    }
-  });
 
-  function triggerDownload() {
-    const url = urlInput.value.trim();
-    if (!url) {
-      statusMsg.innerText = 'Please enter a valid link first!';
-      return;
+      if (data.error || !data.downloadUrl) {
+        statusMsg.innerText = 'Error: YouTube restricted cloud data requests. Try standard formats.';
+        return;
+      }
+
+      document.getElementById('previewImg').src = data.thumbnail;
+      document.getElementById('previewTitle').innerText = data.title;
+      
+      const dlLink = document.getElementById('downloadLink');
+      dlLink.href = data.downloadUrl;
+      // Triggers browser native saver layout
+      dlLink.setAttribute('download', `${data.title}.mp4`);
+
+      previewCard.style.display = 'block';
+      statusMsg.innerText = 'Video processed successfully!';
+    } catch (err) {
+      statusMsg.innerText = 'Failed to capture server signature variables.';
     }
-    statusMsg.innerText = 'Downloading started... Check browser downloads.';
-    // Standard window reference navigation downloads file chunks securely
-    window.location.href = `/download?url=${encodeURIComponent(url)}`;
   }
 </script>
 </body>
