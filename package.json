@@ -1,0 +1,13 @@
+{
+  "name": "youtube-downloader",
+  "version": "1.0.0",
+  "description": "A simple YouTube downloader backend using Express",
+  "main": "app.js",
+  "scripts": {
+    "start": "node app.js"
+  },
+  "dependencies": {
+    "express": "^4.19.2",
+    "youtubei.js": "^18.0.0"
+  }
+}
