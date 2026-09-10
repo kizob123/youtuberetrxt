@@ -47,7 +47,7 @@
     <img id="previewImg" src="">
     <div class="preview-info">
       <h3 id="previewTitle" class="preview-title">Video Stream Ready</h3>
-      <a id="downloadLink" href="" target="_blank" class="action-btn">Download Video File</a>
+      <a id="downloadLink" href="" download class="action-btn">Download Video File</a>
     </div>
   </div>
 </div>
@@ -56,8 +56,8 @@
   function extractVideoId(url) {
     const regExp = /^.*(?:(?:youtu\.be\/|v\/|vi\/|u\/\w\/|embed\/|shorts\/)|(?:(?:watch)?\?v(?:i)?=|\&v(?:i)?=))([^#\&\?]*).*/;
     const match = url.match(regExp);
-    // Returns the matched ID chunk string cleanly if found
-    return (match && match[1]) ? match[1] : null;
+    // FIXED: Properly isolates the string index element string value
+    return (match && match[1].length === 11) ? match[1] : null;
   }
 
   function processVideoClientSide() {
@@ -76,18 +76,18 @@
       return;
     }
 
-    statusMsg.innerText = 'Processing visual metadata templates...';
+    statusMsg.innerText = 'Extracting data streams...';
     
-    // Fixes preview display: pulls image cleanly via YouTube's image domain
+    // Renders the cover snapshot natively
     document.getElementById('previewImg').src = 'https://youtube.com' + videoId + '/hqdefault.jpg';
 
-    // Formats path to point to a working external landing zone
+    // Formats path to point to your secure backend download engine endpoint
     const dlLink = document.getElementById('downloadLink');
-    dlLink.href = 'https://cnvmp3.com' + encodeURIComponent('https://www.youtube.com/watch?v=' + videoId); 
+    dlLink.href = '/api/download?url=' + encodeURIComponent(url); 
 
     document.getElementById('previewTitle').innerText = 'Video ID: ' + videoId + ' (Ready for Extraction)';
     previewCard.style.display = 'block';
-    statusMsg.innerText = 'Click below to finalize your download path connection!';
+    statusMsg.innerText = 'Click below to pull the file directly from your server!';
   }
 </script>
 </body>
