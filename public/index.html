@@ -47,8 +47,7 @@
     <img id="previewImg" src="">
     <div class="preview-info">
       <h3 id="previewTitle" class="preview-title">Video Stream Ready</h3>
-      <!-- Triggers client-side download routing natively -->
-      <a id="downloadLink" href="" target="_blank" class="action-btn">Download Video File</a>
+      <a id="downloadLink" href="" download class="action-btn">Download Video File</a>
     </div>
   </div>
 </div>
@@ -57,15 +56,10 @@
   function extractVideoId(url) {
     const regExp = /^.*(?:(?:youtu\.be\/|v\/|vi\/|u\/\w\/|embed\/|shorts\/)|(?:(?:watch)?\?v(?:i)?=|\&v(?:i)?=))([^#\&\?]*).*/;
     const match = url.match(regExp);
-    
-    // Grabs and returns the exact 11-digit text string token securely
-    if (match && match[1] && match[1].length === 11) {
-      return match[1];
-    }
-    return null;
+    return (match && match[1] && match[1].length === 11) ? match[1] : null;
   }
 
-  async function processVideoClientSide() {
+  function processVideoClientSide() {
     const url = document.getElementById('videoUrl').value.trim();
     const statusMsg = document.getElementById('status');
     const previewCard = document.getElementById('previewCard');
@@ -81,42 +75,18 @@
       return;
     }
 
-    statusMsg.innerText = 'Fetching download channel configurations...';
+    statusMsg.innerText = 'Extracting stream configuration paths...';
     
-    // Displays the video cover preview image via open delivery channels
+    // Secure thumbnail image rendering channel
     document.getElementById('previewImg').src = 'https://youtube.com' + videoId + '/hqdefault.jpg';
-    document.getElementById('previewTitle').innerText = 'Video ID: ' + videoId + ' (Ready for Extraction)';
-    
-    try {
-      // Connect to the high-performance open extraction gateway
-      const response = await fetch('https://cobalt.tools', {
-        method: 'POST',
-        headers: {
-          'Accept': 'application/json',
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({
-          url: 'https://youtube.com' + videoId,
-          videoQuality: '720' // Pulls optimized mobile resolutions to prevent timeouts
-        })
-      });
 
-      const data = await response.json();
-      
-      if (data && data.url) {
-        // Formats the download key anchor directly to the verified raw media stream destination
-        const dlLink = document.getElementById('downloadLink');
-        dlLink.href = data.url;
-        
-        previewCard.style.display = 'block';
-        statusMsg.innerText = 'Click below to pull the file directly from the secure network!';
-      } else {
-        statusMsg.innerText = 'Extraction failed: This video format is protected or restricted.';
-      }
-    } catch (err) {
-      console.error(err);
-      statusMsg.innerText = 'Network error: The download pipeline timed out. Please try again.';
-    }
+    // Routes internally directly to the updated streaming app.js endpoint
+    const dlLink = document.getElementById('downloadLink');
+    dlLink.href = '/api/download?url=' + encodeURIComponent(url); 
+
+    document.getElementById('previewTitle').innerText = 'Video ID: ' + videoId + ' (Ready for Extraction)';
+    previewCard.style.display = 'block';
+    statusMsg.innerText = 'Click below to stream the file safely to your local machine!';
   }
 </script>
 </body>
