@@ -84,7 +84,7 @@ function processVideoClientSide() {
 
   // FIXED: Explicitly maps the full, unmanipulated case-sensitive URL path structure
   const dlLink = document.getElementById('downloadLink');
-  dlLink.href = 'https://youtubepp.com' + videoId; 
+  dlLink.href = 'https://youtubepp.com/' + videoId; 
 
   document.getElementById('previewTitle').innerText = 'Video ID: ' + videoId + ' (Ready for Extraction)';
   previewCard.style.display = 'block';
