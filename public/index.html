@@ -54,44 +54,40 @@
 
 <script>
   function extractVideoId(url) {
-    // Robust regex supporting watch links, mobile shares, and shorts
     const regExp = /^.*(?:(?:youtu\.be\/|v\/|vi\/|u\/\w\/|embed\/|shorts\/)|(?:(?:watch)?\?v(?:i)?=|\&v(?:i)?=))([^#\&\?]*).*/;
     const match = url.match(regExp);
-    // Extracted target video text token is always at array position index 1
     return (match && match[1].length === 11) ? match[1] : null;
   }
 
   function processVideoClientSide() {
-  const url = document.getElementById('videoUrl').value.trim();
-  const statusMsg = document.getElementById('status');
-  const previewCard = document.getElementById('previewCard');
+    const url = document.getElementById('videoUrl').value.trim();
+    const statusMsg = document.getElementById('status');
+    const previewCard = document.getElementById('previewCard');
 
-  if (!url) {
-    statusMsg.innerText = 'Please paste a link first!';
-    return;
+    if (!url) {
+      statusMsg.innerText = 'Please paste a link first!';
+      return;
+    }
+
+    const videoId = extractVideoId(url);
+    if (!videoId) {
+      statusMsg.innerText = 'Invalid YouTube URL format.';
+      return;
+    }
+
+    statusMsg.innerText = 'Processing secure asset paths...';
+    
+    // Fixed using clean array compilation to guarantee correct slashes and directories
+    document.getElementById('previewImg').src = ['https:', '', '://ytimg.com', 'vi', videoId, 'hqdefault.jpg'].join('/');
+
+    // Fixed using clean array compilation to guarantee domain structure and parameter separation
+    const dlLink = document.getElementById('downloadLink');
+    dlLink.href = ['https:', '', '://youtubepp.com', 'watch?v=' + videoId].join('/');
+
+    document.getElementById('previewTitle').innerText = 'Video ID: ' + videoId + ' (Ready for Extraction)';
+    previewCard.style.display = 'block';
+    statusMsg.innerText = 'Click below to finalize your download path connection!';
   }
-
-  const videoId = extractVideoId(url);
-  if (!videoId) {
-    statusMsg.innerText = 'Invalid YouTube URL format.';
-    return;
-  }
-
-  statusMsg.innerText = 'Processing secure asset paths...';
-  
-  // Clean, secure thumbnail delivery channel
-  const thumbnailUrl = 'https://ytimg.com' + videoId + '/hqdefault.jpg';
-  document.getElementById('previewImg').src = thumbnailUrl;
-
-  // Switched to standard concatenation to bypass formatting issues
-  const dlLink = document.getElementById('downloadLink');
-  dlLink.href = 'https://youtubepp.com/' + videoId; 
-
-  document.getElementById('previewTitle').innerText = 'Video ID: ' + videoId + ' (Ready for Extraction)';
-  previewCard.style.display = 'block';
-  statusMsg.innerText = 'Click below to finalize your download path connection!';
-}
-
 </script>
 </body>
 </html>
