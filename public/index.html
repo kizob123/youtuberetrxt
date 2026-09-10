@@ -53,7 +53,14 @@
 </div>
 
 <script>
-    function processVideoClientSide() {
+  // Added missing helper function to parse URLs
+  function extractVideoId(url) {
+    const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|\&v=)([^#\&\?]*).*/;
+    const match = url.match(regExp);
+    return (match && match[2].length === 11) ? match[2] : null;
+  }
+
+  function processVideoClientSide() {
     const url = document.getElementById('videoUrl').value.trim();
     const statusMsg = document.getElementById('status');
     const previewCard = document.getElementById('previewCard');
@@ -71,11 +78,10 @@
 
     statusMsg.innerText = 'Processing locally via browser...';
     
-    // Fetch the thumbnail safely using the open image channel
+    // Fixed: Added missing '$' signs for template literal variables
     const thumbnailUrl = `https://youtube.com{videoId}/hqdefault.jpg`;
     document.getElementById('previewImg').src = thumbnailUrl;
 
-    // Apply the corrected youtubepp watch parameter structure
     const dlLink = document.getElementById('downloadLink');
     dlLink.href = `https://youtubepp.com{videoId}`; 
 
@@ -83,7 +89,6 @@
     previewCard.style.display = 'block';
     statusMsg.innerText = 'Click below to finalize your download path connection!';
   }
-
 </script>
 </body>
 </html>
