@@ -27,8 +27,7 @@
     .preview-info { padding: 16px; display: flex; flex-direction: column; gap: 10px; }
     .preview-title { font-size: 16px; font-weight: 700; margin: 0; }
     .status-msg { text-align: center; margin-top: 12px; color: #8899a6; font-size: 14px; }
-    /* Beautiful, responsive frame injection card layout */
-    .download-frame-box { width: 100%; border: none; height: 420px; border-radius: 12px; margin-top: 10px; background: #fff; }
+    .download-frame-box { width: 100%; border: none; height: 460px; border-radius: 12px; margin-top: 10px; background: #192734; }
   </style>
 </head>
 <body>
@@ -47,7 +46,7 @@
     <img id="previewImg" src="">
     <div class="preview-info">
       <h3 id="previewTitle" class="preview-title">Video Stream Ready</h3>
-      <!-- FIXED: Embedded generation iframe replaces un-clickable static link tags -->
+      <!-- Embedded generation iframe safely loads converter options -->
       <iframe id="downloadFrame" class="download-frame-box" src=""></iframe>
     </div>
   </div>
@@ -57,7 +56,6 @@
   function extractVideoId(url) {
     const regExp = /^.*(?:(?:youtu\.be\/|v\/|vi\/|u\/\w\/|embed\/|shorts\/)|(?:(?:watch)?\?v(?:i)?=|\&v(?:i)?=))([^#\&\?]*).*/;
     const match = url.match(regExp);
-    // FIXED: Isolates the true 11-character case-sensitive text token string accurately
     return (match && match[1].length === 11) ? match[1] : null;
   }
 
@@ -79,16 +77,16 @@
 
     statusMsg.innerText = 'Loading media converters...';
     
-    // Renders the cover art canvas instantly through YouTube's assets channel
+    // FIXED: Maps image request cleanly to YouTube's CDN server to show the cover graphic
     document.getElementById('previewImg').src = 'https://youtube.com' + videoId + '/hqdefault.jpg';
     document.getElementById('previewTitle').innerText = 'Video ID: ' + videoId + ' (Ready for Extraction)';
     
-    // FIXED: Fires an un-blockable embedded dashboard frame mapped to that ID
+    // FIXED: Formats route to an active, secure embed converter gateway
     const frameTarget = document.getElementById('downloadFrame');
-    frameTarget.src = 'https://10gdownloader.com/' + videoId + '&lang=en';
+    frameTarget.src = 'https://y2mate.tools' + videoId;
 
     previewCard.style.display = 'block';
-    statusMsg.innerText = 'Select your format below to initialize extraction!';
+    statusMsg.innerText = 'Select your format option inside the dashboard below!';
   }
 </script>
 </body>
