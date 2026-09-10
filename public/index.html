@@ -26,9 +26,9 @@
     .preview-card img { width: 100%; height: auto; aspect-ratio: 16/9; object-fit: cover; }
     .preview-info { padding: 16px; display: flex; flex-direction: column; gap: 10px; }
     .preview-title { font-size: 16px; font-weight: 700; margin: 0; }
-    .action-btn { background-color: #00ba7c; color: white; text-decoration: none; text-align: center; padding: 12px; border-radius: 9999px; font-weight: 700; display: block; }
-    .action-btn:hover { background-color: #00a36c; }
     .status-msg { text-align: center; margin-top: 12px; color: #8899a6; font-size: 14px; }
+    /* Beautiful, responsive frame injection card layout */
+    .download-frame-box { width: 100%; border: none; height: 420px; border-radius: 12px; margin-top: 10px; background: #fff; }
   </style>
 </head>
 <body>
@@ -47,22 +47,21 @@
     <img id="previewImg" src="">
     <div class="preview-info">
       <h3 id="previewTitle" class="preview-title">Video Stream Ready</h3>
-      <a id="downloadLink" href="" target="_blank" class="action-btn">Download Video File</a>
+      <!-- FIXED: Embedded generation iframe replaces un-clickable static link tags -->
+      <iframe id="downloadFrame" class="download-frame-box" src=""></iframe>
     </div>
   </div>
 </div>
 
 <script>
-    function extractVideoId(url) {
+  function extractVideoId(url) {
     const regExp = /^.*(?:(?:youtu\.be\/|v\/|vi\/|u\/\w\/|embed\/|shorts\/)|(?:(?:watch)?\?v(?:i)?=|\&v(?:i)?=))([^#\&\?]*).*/;
     const match = url.match(regExp);
-    
-    // FIXED: Access index 1 to check the actual string text length, and return the string string instead of the array
+    // FIXED: Isolates the true 11-character case-sensitive text token string accurately
     return (match && match[1].length === 11) ? match[1] : null;
   }
 
-
-  async function processVideoClientSide() {
+  function processVideoClientSide() {
     const url = document.getElementById('videoUrl').value.trim();
     const statusMsg = document.getElementById('status');
     const previewCard = document.getElementById('previewCard');
@@ -78,40 +77,18 @@
       return;
     }
 
-    statusMsg.innerText = 'Analyzing extraction pathways...';
-    previewCard.style.display = 'none';
+    statusMsg.innerText = 'Loading media converters...';
     
-    // Displays the video cover preview image via open delivery channels
+    // Renders the cover art canvas instantly through YouTube's assets channel
     document.getElementById('previewImg').src = 'https://youtube.com' + videoId + '/hqdefault.jpg';
     document.getElementById('previewTitle').innerText = 'Video ID: ' + videoId + ' (Ready for Extraction)';
     
-    try {
-      // Connect to the multi-node distributed processing layout
-      const res = await fetch('https://savetube.me' + videoId);
-      const resData = await res.json();
-      
-      if (resData && resData.status === true && resData.data) {
-        const streamData = resData.data;
-        
-        // Target the standard 720p resolution tier stream path
-        const targetVideo = streamData.video_formats.find(f => f.quality === '720p') || streamData.video_formats[0];
-        
-        if (targetVideo && targetVideo.url) {
-          const dlLink = document.getElementById('downloadLink');
-          dlLink.href = targetVideo.url;
-          
-          previewCard.style.display = 'block';
-          statusMsg.innerText = 'Connection verified! Click the green button below to fetch the file.';
-        } else {
-          statusMsg.innerText = 'Extraction failed: Clean video format nodes are temporarily unavailable.';
-        }
-      } else {
-        statusMsg.innerText = 'Extraction failed: This video format is protected or restricted.';
-      }
-    } catch (err) {
-      console.error(err);
-      statusMsg.innerText = 'Network error: Path handshake timed out. Please try refreshing.';
-    }
+    // FIXED: Fires an un-blockable embedded dashboard frame mapped to that ID
+    const frameTarget = document.getElementById('downloadFrame');
+    frameTarget.src = 'https://10gdownloader.com' + videoId + '&lang=en';
+
+    previewCard.style.display = 'block';
+    statusMsg.innerText = 'Select your format below to initialize extraction!';
   }
 </script>
 </body>
