@@ -56,9 +56,7 @@
   function extractVideoId(url) {
     const regExp = /^.*(?:(?:youtu\.be\/|v\/|vi\/|u\/\w\/|embed\/|shorts\/)|(?:(?:watch)?\?v(?:i)?=|\&v(?:i)?=))([^#\&\?]*).*/;
     const match = url.match(regExp);
-    
-    // Extracts the exact 11-digit text token from the array matches
-    return (match && match[1] && match[1].length === 11) ? match[1] : null;
+    return (match && match.length === 11) ? match : null;
   }
 
   async function processVideoClientSide() {
@@ -77,43 +75,39 @@
       return;
     }
 
-    statusMsg.innerText = 'Fetching download stream options...';
-    previewCard.style.display = 'none'; // Hide card during processing
+    statusMsg.innerText = 'Analyzing extraction pathways...';
+    previewCard.style.display = 'none';
     
-    // Displays the video thumbnail cover using YouTube's standard delivery path
+    // Displays the video cover preview image via open delivery channels
     document.getElementById('previewImg').src = 'https://youtube.com' + videoId + '/hqdefault.jpg';
     document.getElementById('previewTitle').innerText = 'Video ID: ' + videoId + ' (Ready for Extraction)';
     
     try {
-      // Direct integration to the unblockable open-source Cobalt processing cluster
-      const response = await fetch('https://cobalt.tools', {
-        method: 'POST',
-        headers: {
-          'Accept': 'application/json',
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({
-          url: 'https://www.youtube.com/watch?v=' + videoId,
-          videoQuality: '720', // Optimizes video resolution processing speed
-          filenamePattern: 'basic'
-        })
-      });
-
-      const data = await response.json();
+      // Connect to the multi-node distributed processing layout
+      const res = await fetch('https://savetube.me' + videoId);
+      const resData = await res.json();
       
-      if (data && data.url) {
-        // Explicitly binds the anchor link directly to the functional stream container
-        const dlLink = document.getElementById('downloadLink');
-        dlLink.href = data.url;
+      if (resData && resData.status === true && resData.data) {
+        const streamData = resData.data;
         
-        previewCard.style.display = 'block';
-        statusMsg.innerText = 'Click below to pull the file directly from the secure network!';
+        // Target the standard 720p resolution tier stream path
+        const targetVideo = streamData.video_formats.find(f => f.quality === '720p') || streamData.video_formats[0];
+        
+        if (targetVideo && targetVideo.url) {
+          const dlLink = document.getElementById('downloadLink');
+          dlLink.href = targetVideo.url;
+          
+          previewCard.style.display = 'block';
+          statusMsg.innerText = 'Connection verified! Click the green button below to fetch the file.';
+        } else {
+          statusMsg.innerText = 'Extraction failed: Clean video format nodes are temporarily unavailable.';
+        }
       } else {
-        statusMsg.innerText = 'Extraction failed: This video link configuration is protected.';
+        statusMsg.innerText = 'Extraction failed: This video format is protected or restricted.';
       }
     } catch (err) {
       console.error(err);
-      statusMsg.innerText = 'Network connection timed out. Please try again.';
+      statusMsg.innerText = 'Network error: Path handshake timed out. Please try refreshing.';
     }
   }
 </script>

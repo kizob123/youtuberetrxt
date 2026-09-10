@@ -10,8 +10,8 @@ app.get('*', (req, res) => {
   res.sendFile(path.join(__dirname, 'public', 'index.html'));
 });
 
-// Production-ready dynamic port configuration for Render
+// Production port configuration for Render
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
-  console.log(`Downloader web server running safely on port ${PORT}`);
+  console.log(`Downloader application web server running safely on port ${PORT}`);
 });
