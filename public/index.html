@@ -47,7 +47,7 @@
     <img id="previewImg" src="">
     <div class="preview-info">
       <h3 id="previewTitle" class="preview-title">Video Stream Ready</h3>
-      <a id="downloadLink" href="" download class="action-btn">Download Video File</a>
+      <a id="downloadLink" href="" target="_blank" class="action-btn">Download Video File</a>
     </div>
   </div>
 </div>
@@ -56,10 +56,12 @@
   function extractVideoId(url) {
     const regExp = /^.*(?:(?:youtu\.be\/|v\/|vi\/|u\/\w\/|embed\/|shorts\/)|(?:(?:watch)?\?v(?:i)?=|\&v(?:i)?=))([^#\&\?]*).*/;
     const match = url.match(regExp);
+    
+    // Extracts the exact 11-digit text token from the array matches
     return (match && match[1] && match[1].length === 11) ? match[1] : null;
   }
 
-  function processVideoClientSide() {
+  async function processVideoClientSide() {
     const url = document.getElementById('videoUrl').value.trim();
     const statusMsg = document.getElementById('status');
     const previewCard = document.getElementById('previewCard');
@@ -75,18 +77,44 @@
       return;
     }
 
-    statusMsg.innerText = 'Extracting stream configuration paths...';
+    statusMsg.innerText = 'Fetching download stream options...';
+    previewCard.style.display = 'none'; // Hide card during processing
     
-    // Secure thumbnail image rendering channel
+    // Displays the video thumbnail cover using YouTube's standard delivery path
     document.getElementById('previewImg').src = 'https://youtube.com' + videoId + '/hqdefault.jpg';
-
-    // Routes internally directly to the updated streaming app.js endpoint
-    const dlLink = document.getElementById('downloadLink');
-    dlLink.href = '/api/download?url=' + encodeURIComponent(url); 
-
     document.getElementById('previewTitle').innerText = 'Video ID: ' + videoId + ' (Ready for Extraction)';
-    previewCard.style.display = 'block';
-    statusMsg.innerText = 'Click below to stream the file safely to your local machine!';
+    
+    try {
+      // Direct integration to the unblockable open-source Cobalt processing cluster
+      const response = await fetch('https://cobalt.tools', {
+        method: 'POST',
+        headers: {
+          'Accept': 'application/json',
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          url: 'https://www.youtube.com/watch?v=' + videoId,
+          videoQuality: '720', // Optimizes video resolution processing speed
+          filenamePattern: 'basic'
+        })
+      });
+
+      const data = await response.json();
+      
+      if (data && data.url) {
+        // Explicitly binds the anchor link directly to the functional stream container
+        const dlLink = document.getElementById('downloadLink');
+        dlLink.href = data.url;
+        
+        previewCard.style.display = 'block';
+        statusMsg.innerText = 'Click below to pull the file directly from the secure network!';
+      } else {
+        statusMsg.innerText = 'Extraction failed: This video link configuration is protected.';
+      }
+    } catch (err) {
+      console.error(err);
+      statusMsg.innerText = 'Network connection timed out. Please try again.';
+    }
   }
 </script>
 </body>
