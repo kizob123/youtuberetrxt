@@ -2,6 +2,9 @@ const express = require('express');
 const path = require('path');
 const app = express();
 
+// Force JSON parsed body routing
+app.use(express.json());
+
 // Serve the frontend files from the public folder
 app.use(express.static(path.join(__dirname, 'public')));
 
