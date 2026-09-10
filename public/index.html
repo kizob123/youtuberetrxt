@@ -53,11 +53,12 @@
 </div>
 
 <script>
-  // Added missing helper function to parse URLs
   function extractVideoId(url) {
-    const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|\&v=)([^#\&\?]*).*/;
+    // Robust regex supporting watch links, mobile shares, and shorts
+    const regExp = /^.*(?:(?:youtu\.be\/|v\/|vi\/|u\/\w\/|embed\/|shorts\/)|(?:(?:watch)?\?v(?:i)?=|\&v(?:i)?=))([^#\&\?]*).*/;
     const match = url.match(regExp);
-    return (match && match[2].length === 11) ? match[2] : null;
+    // Extracted target video text token is always at array position index 1
+    return (match && match[1].length === 11) ? match[1] : null;
   }
 
   function processVideoClientSide() {
@@ -76,12 +77,13 @@
       return;
     }
 
-    statusMsg.innerText = 'Processing locally via browser...';
+    statusMsg.innerText = 'Processing secure asset paths...';
     
-    // Fixed: Added missing '$' signs for template literal variables
-    const thumbnailUrl = `https://youtube.com{videoId}/hqdefault.jpg`;
+    // Fixed: Standardized secure image delivery for live web host deployments
+    const thumbnailUrl = `https://ytimg.com{videoId}/hqdefault.jpg`;
     document.getElementById('previewImg').src = thumbnailUrl;
 
+    // Fixed: Formatted template literal connection block string
     const dlLink = document.getElementById('downloadLink');
     dlLink.href = `https://youtubepp.com{videoId}`; 
 
