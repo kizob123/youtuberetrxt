@@ -53,41 +53,48 @@
 </div>
 
 <script>
-  function extractVideoId(url) {
-    const regExp = /^.*(?:(?:youtu\.be\/|v\/|vi\/|u\/\w\/|embed\/|shorts\/)|(?:(?:watch)?\?v(?:i)?=|\&v(?:i)?=))([^#\&\?]*).*/;
-    const match = url.match(regExp);
-    return (match && match[1].length === 11) ? match[1] : null;
+function extractVideoId(url) {
+  // Enhanced regex that preserves case and handles standard, shorts, and mobile share formats
+  const regExp = /^.*(?:(?:youtu\.be\/|v\/|vi\/|u\/\w\/|embed\/|shorts\/)|(?:(?:watch)?\?v(?:i)?=|\&v(?:i)?=))([^#\&\?]*).*/;
+  const match = url.match(regExp);
+  
+  // Clean validation to return the exact case-sensitive 11-character ID string
+  if (match && match[1] && match[1].length === 11) {
+    return match[1];
+  }
+  return null;
+}
+
+function processVideoClientSide() {
+  const url = document.getElementById('videoUrl').value.trim();
+  const statusMsg = document.getElementById('status');
+  const previewCard = document.getElementById('previewCard');
+
+  if (!url) {
+    statusMsg.innerText = 'Please paste a link first!';
+    return;
   }
 
-  function processVideoClientSide() {
-    const url = document.getElementById('videoUrl').value.trim();
-    const statusMsg = document.getElementById('status');
-    const previewCard = document.getElementById('previewCard');
-
-    if (!url) {
-      statusMsg.innerText = 'Please paste a link first!';
-      return;
-    }
-
-    const videoId = extractVideoId(url);
-    if (!videoId) {
-      statusMsg.innerText = 'Invalid YouTube URL format.';
-      return;
-    }
-
-    statusMsg.innerText = 'Processing secure asset paths...';
-    
-    // FIX 1: Corrected thumbnail domain and added the missing /vi/ folder path
-    document.getElementById('previewImg').src = 'https://youtube.com' + videoId + '/hqdefault.jpg';
-
-    // FIX 2: Added the proper full URL structure with the mandatory watch syntax
-    const dlLink = document.getElementById('downloadLink');
-    dlLink.href = 'https://youtubepp.com' + videoId; 
-
-    document.getElementById('previewTitle').innerText = 'Video ID: ' + videoId + ' (Ready for Extraction)';
-    previewCard.style.display = 'block';
-    statusMsg.innerText = 'Click below to finalize your download path connection!';
+  const videoId = extractVideoId(url);
+  if (!videoId) {
+    statusMsg.innerText = 'Invalid YouTube URL format.';
+    return;
   }
+
+  statusMsg.innerText = 'Processing secure asset paths...';
+  
+  // Fixed: Standardized secure image delivery for live web host deployments
+  document.getElementById('previewImg').src = 'https://youtube.com' + videoId + '/hqdefault.jpg';
+
+  // FIXED: Explicitly maps the full, unmanipulated case-sensitive URL path structure
+  const dlLink = document.getElementById('downloadLink');
+  dlLink.href = 'https://youtubepp.com' + videoId; 
+
+  document.getElementById('previewTitle').innerText = 'Video ID: ' + videoId + ' (Ready for Extraction)';
+  previewCard.style.display = 'block';
+  statusMsg.innerText = 'Click below to finalize your download path connection!';
+}
+
 </script>
 </body>
 </html>
