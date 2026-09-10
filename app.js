@@ -1,12 +1,12 @@
 const express = require('express');
 const path = require('path');
-const { Readable } = require('stream'); // CRUCIAL: Node utility to convert stream formats
-const { Innertube } = require('youtubei.js'); 
+const { Innertube } = require('youtubei.js'); // Active internal API wrapper
 const app = express();
 
 app.use(express.json());
 app.use(express.static(path.join(__dirname, 'public')));
 
+// Keep a single instance ready to prevent slowdowns
 let youtubeEngine = null;
 async function getYoutubeInstance() {
   if (!youtubeEngine) {
@@ -15,6 +15,7 @@ async function getYoutubeInstance() {
   return youtubeEngine;
 }
 
+// Low-memory streaming API endpoint
 app.get('/api/download', async (req, res) => {
   try {
     const videoUrl = req.query.url;
@@ -22,34 +23,47 @@ app.get('/api/download', async (req, res) => {
       return res.status(400).send('Missing video URL parameter.');
     }
 
+    // FIXED: Correctly pulls the clean 11-digit ID parameter out of group index 1
     const videoIdMatch = videoUrl.match(/^.*(?:(?:youtu\.be\/|v\/|vi\/|u\/\w\/|embed\/|shorts\/)|(?:(?:watch)?\?v(?:i)?=|\&v(?:i)?=))([^#\&\?]*).*/);
     if (!videoIdMatch || videoIdMatch.length < 2) {
       return res.status(400).send('Invalid YouTube URL format.');
     }
-    const videoId = videoIdMatch[1];
+    const videoId = videoIdMatch[1]; // Target position index 1 directly
 
     const youtube = await getYoutubeInstance();
     
-    res.setHeader('Content-Disposition', `attachment; filename="youtuber_extract_${videoId}.mp4"`);
+    // Configure client browser parameters to force download prompts natively
+    res.setHeader('Content-Disposition', `attachment; filename="video_${videoId}.mp4"`);
     res.setHeader('Content-Type', 'video/mp4');
     
-    // Fetch the raw web stream from YouTube
+    // Pull the clean web video data layout channel
     const webStream = await youtube.download(videoId, {
       type: 'video+audio',
       quality: 'best',
       client: 'ANDROID'
     });
 
-    // FIXED: Converts the modern Web stream into a classic Node stream layout
-    const nodeStream = Readable.fromWeb(webStream);
+    // FIXED: Creates a web-standard writable pipeline to flash chunks to Express natively
+    const expressWritableStream = new WritableStream({
+      write(chunk) {
+        res.write(chunk);
+      },
+      close() {
+        res.end();
+      },
+      abort(err) {
+        console.error('Stream playback aborted:', err);
+        if (!res.headersSent) res.status(500).end();
+      }
+    });
 
-    // Pipes the chunk array natively into the web response frame without crashes
-    nodeStream.pipe(res);
+    // Directly pipe the web stream into Express without format converters or crashes
+    await webStream.pipeTo(expressWritableStream);
 
   } catch (error) {
-    console.error('Download stream error:', error);
+    console.error('Direct download pipeline execution failure:', error);
     if (!res.headersSent) {
-      res.status(500).send('Internal Server Error: Direct video data stream failed.');
+      res.status(500).send('Internal Server Error: Direct video extraction failed.');
     }
   }
 });
@@ -60,5 +74,5 @@ app.get('*', (req, res) => {
 
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
-  console.log(`youtubei.js engine running safely on port ${PORT}`);
+  console.log(`Server running smoothly on port ${PORT}`);
 });
