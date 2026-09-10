@@ -54,15 +54,11 @@
 
 <script>
 function extractVideoId(url) {
-  // Enhanced regex that preserves case and handles standard, shorts, and mobile share formats
   const regExp = /^.*(?:(?:youtu\.be\/|v\/|vi\/|u\/\w\/|embed\/|shorts\/)|(?:(?:watch)?\?v(?:i)?=|\&v(?:i)?=))([^#\&\?]*).*/;
   const match = url.match(regExp);
   
-  // Clean validation to return the exact case-sensitive 11-character ID string
-  if (match && match[1] && match[1].length === 11) {
-    return match[1];
-  }
-  return null;
+  // FIX: Make sure the match exists, and target the length of the actual group 1 string text
+  return (match && match[1] && match[1].length === 11) ? match[1] : null;
 }
 
 function processVideoClientSide() {
