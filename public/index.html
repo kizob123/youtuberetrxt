@@ -62,35 +62,36 @@
   }
 
   function processVideoClientSide() {
-    const url = document.getElementById('videoUrl').value.trim();
-    const statusMsg = document.getElementById('status');
-    const previewCard = document.getElementById('previewCard');
+  const url = document.getElementById('videoUrl').value.trim();
+  const statusMsg = document.getElementById('status');
+  const previewCard = document.getElementById('previewCard');
 
-    if (!url) {
-      statusMsg.innerText = 'Please paste a link first!';
-      return;
-    }
-
-    const videoId = extractVideoId(url);
-    if (!videoId) {
-      statusMsg.innerText = 'Invalid YouTube URL format.';
-      return;
-    }
-
-    statusMsg.innerText = 'Processing secure asset paths...';
-    
-    // Fixed: Standadlinkrdized secure image delivery for live web host deployments
-    const thumbnailUrl = `https://ytimg.com{videoId}/hqdefault.jpg`;
-    document.getElementById('previewImg').src = thumbnailUrl;
-
-    // Fixed: Formatted template literal connection block string
-    const dlLink = document.getElementById('downloadLink');
-    dlLink.href = `https://youtubepp.com/${videoId}`; 
-
-    document.getElementById('previewTitle').innerText = `Video ID: ${videoId} (Ready for Extraction)`;
-    previewCard.style.display = 'block';
-    statusMsg.innerText = 'Click below to finalize your download path connection!';
+  if (!url) {
+    statusMsg.innerText = 'Please paste a link first!';
+    return;
   }
+
+  const videoId = extractVideoId(url);
+  if (!videoId) {
+    statusMsg.innerText = 'Invalid YouTube URL format.';
+    return;
+  }
+
+  statusMsg.innerText = 'Processing secure asset paths...';
+  
+  // Clean, secure thumbnail delivery channel
+  const thumbnailUrl = 'https://ytimg.com' + videoId + '/hqdefault.jpg';
+  document.getElementById('previewImg').src = thumbnailUrl;
+
+  // Switched to standard concatenation to bypass formatting issues
+  const dlLink = document.getElementById('downloadLink');
+  dlLink.href = 'https://youtubepp.com' + videoId; 
+
+  document.getElementById('previewTitle').innerText = 'Video ID: ' + videoId + ' (Ready for Extraction)';
+  previewCard.style.display = 'block';
+  statusMsg.innerText = 'Click below to finalize your download path connection!';
+}
+
 </script>
 </body>
 </html>
