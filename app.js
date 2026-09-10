@@ -1,12 +1,12 @@
 const express = require('express');
 const path = require('path');
-const { Innertube } = require('youtubei.js'); // The modern YouTube engine
+const { Readable } = require('stream'); // CRUCIAL: Node utility to convert stream formats
+const { Innertube } = require('youtubei.js'); 
 const app = express();
 
 app.use(express.json());
 app.use(express.static(path.join(__dirname, 'public')));
 
-// Reuse a single Innertube instance across requests for speed performance
 let youtubeEngine = null;
 async function getYoutubeInstance() {
   if (!youtubeEngine) {
@@ -15,7 +15,6 @@ async function getYoutubeInstance() {
   return youtubeEngine;
 }
 
-// Low-memory streaming API endpoint
 app.get('/api/download', async (req, res) => {
   try {
     const videoUrl = req.query.url;
@@ -23,31 +22,29 @@ app.get('/api/download', async (req, res) => {
       return res.status(400).send('Missing video URL parameter.');
     }
 
-    // Isolate the clean video ID
     const videoIdMatch = videoUrl.match(/^.*(?:(?:youtu\.be\/|v\/|vi\/|u\/\w\/|embed\/|shorts\/)|(?:(?:watch)?\?v(?:i)?=|\&v(?:i)?=))([^#\&\?]*).*/);
-    if (!videoIdMatch || videoIdMatch.length < 2 || videoIdMatch[1].length !== 11) {
+    if (!videoIdMatch || videoIdMatch.length < 2) {
       return res.status(400).send('Invalid YouTube URL format.');
     }
     const videoId = videoIdMatch[1];
 
     const youtube = await getYoutubeInstance();
     
-    // Set headers to force download natively instead of buffering in memory
-    res.setHeader('Content-Disposition', `attachment; filename="video_${videoId}.mp4"`);
+    res.setHeader('Content-Disposition', `attachment; filename="youtuber_extract_${videoId}.mp4"`);
     res.setHeader('Content-Type', 'video/mp4');
     
-    // Request stream via Android endpoint to avoid 403 blocks
-    const stream = await youtube.download(videoId, {
+    // Fetch the raw web stream from YouTube
+    const webStream = await youtube.download(videoId, {
       type: 'video+audio',
       quality: 'best',
       client: 'ANDROID'
     });
 
-    // CRUCIAL: Immediately flash chunks to the browser to prevent RAM spikes
-    for await (const chunk of stream) {
-      res.write(chunk);
-    }
-    res.end();
+    // FIXED: Converts the modern Web stream into a classic Node stream layout
+    const nodeStream = Readable.fromWeb(webStream);
+
+    // Pipes the chunk array natively into the web response frame without crashes
+    nodeStream.pipe(res);
 
   } catch (error) {
     console.error('Download stream error:', error);
