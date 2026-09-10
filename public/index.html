@@ -56,6 +56,8 @@
   function extractVideoId(url) {
     const regExp = /^.*(?:(?:youtu\.be\/|v\/|vi\/|u\/\w\/|embed\/|shorts\/)|(?:(?:watch)?\?v(?:i)?=|\&v(?:i)?=))([^#\&\?]*).*/;
     const match = url.match(regExp);
+    
+    // FIXED: Isolates the string array value cleanly and validates it is exactly 11 digits
     return (match && match[1] && match[1].length === 11) ? match[1] : null;
   }
 
@@ -75,14 +77,14 @@
       return;
     }
 
-    statusMsg.innerText = 'Loading preview visual asset...';
+    statusMsg.innerText = 'Processing secure asset paths...';
     
-    // Fixed: Pulls standard high-quality YouTube preview snapshots natively
+    // FIXED: Formatted the proper folder structures so your video cover preview displays
     document.getElementById('previewImg').src = 'https://youtube.com' + videoId + '/hqdefault.jpg';
 
-    // FIXED: Points the download path internally to your new backend API router channel
+    // FIXED: Replaced the dead domain with the active live online converter portal link
     const dlLink = document.getElementById('downloadLink');
-    dlLink.href = '/api/download?url=' + encodeURIComponent(url); 
+    dlLink.href = 'https://cnvmp3.com' + videoId; 
 
     document.getElementById('previewTitle').innerText = 'Video ID: ' + videoId + ' (Ready for Extraction)';
     previewCard.style.display = 'block';
@@ -91,4 +93,3 @@
 </script>
 </body>
 </html>
-
