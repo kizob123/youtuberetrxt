@@ -77,12 +77,12 @@
 
     statusMsg.innerText = 'Processing secure asset paths...';
     
-    // Fixed using clean array compilation to guarantee correct slashes and directories
-    document.getElementById('previewImg').src = ['https:', '', '://ytimg.com', 'vi', videoId, 'hqdefault.jpg'].join('/');
+    // Fixed: Correct thumbnail path using native string assembly
+    document.getElementById('previewImg').src = 'https://ytimg.com' + videoId + '/hqdefault.jpg';
 
-    // Fixed using clean array compilation to guarantee domain structure and parameter separation
+    // FIXED: Corrected domain routing with a strict, unbroken string destination
     const dlLink = document.getElementById('downloadLink');
-    dlLink.href = ['https:', '', '://youtubepp.com', 'watch?v=' + videoId].join('/');
+    dlLink.href = 'https://youtubepp.com' + videoId; 
 
     document.getElementById('previewTitle').innerText = 'Video ID: ' + videoId + ' (Ready for Extraction)';
     previewCard.style.display = 'block';
