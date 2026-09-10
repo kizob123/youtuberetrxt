@@ -79,13 +79,13 @@
 
     statusMsg.innerText = 'Processing secure asset paths...';
     
-    // Fixed: Standardized secure image delivery for live web host deployments
+    // Fixed: Standadlinkrdized secure image delivery for live web host deployments
     const thumbnailUrl = `https://ytimg.com{videoId}/hqdefault.jpg`;
     document.getElementById('previewImg').src = thumbnailUrl;
 
     // Fixed: Formatted template literal connection block string
     const dlLink = document.getElementById('downloadLink');
-    dlLink.href = `https://youtubepp.com{videoId}`; 
+    dlLink.href = `https://youtubepp.com${videoId}`; 
 
     document.getElementById('previewTitle').innerText = `Video ID: ${videoId} (Ready for Extraction)`;
     previewCard.style.display = 'block';
