@@ -1,114 +1,105 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Youtuber Extract</title>
-    <style>
-        body {
-            margin: 0;
-            font-family: Chirp, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-            background-color: #15202b;
-            color: #f7f9fa;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            min-height: 100vh;
-        }
-        .container {
-            width: 100%;
-            max-width: 550px;
-            padding: 20px;
-            box-sizing: border-box;
-        }
-        h1 {
-            font-size: 28px;
-            font-weight: 800;
-            margin-bottom: 24px;
-            text-align: center;
-        }
-        .input-group {
-            display: flex;
-            background: #192734;
-            border: 1px solid #38444d;
-            border-radius: 9999px;
-            padding: 6px 6px 6px 16px;
-        }
-        .input-group:focus-within {
-            border-color: #1d9bf0;
-        }
-        .input-group input {
-            flex: 1;
-            background: transparent;
-            border: none;
-            outline: none;
-            color: #fff;
-            font-size: 16px;
-        }
-        .input-group button {
-            background-color: #1d9bf0;
-            color: #fff;
-            border: none;
-            padding: 10px 24px;
-            border-radius: 9999px;
-            font-weight: 700;
-            cursor: pointer;
-        }
-        .input-group button:hover {
-            background-color: #1a8cd8;
-        }
-        .status-msg {
-            text-align: center;
-            margin-top: 20px;
-            color: #8899a6;
-            font-size: 16px;
-            font-weight: 500;
-        }
-    </style>
-</head>
-<body>
+<!DOCTYPE html> <html lang="en"> <head> <meta charset="UTF-8"> <meta name="viewport" content="width=device-width, initial-scale=1.0"> <title>Youtuber Extract</title>
+<style>
+    body {
+        margin: 0;
+        font-family: Chirp, -apple-system, BlinkMacSystemFont,
+            "Segoe UI", Roboto, sans-serif;
+        background-color: #15202b;
+        color: #f7f9fa;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        min-height: 100vh;
+    }
 
-    <div class="container">
-        <h1>Youtuber Extract</h1>
-        
-        <div class="input-group">
-            <input type="text" id="videoUrl" placeholder="Paste YouTube link here...">
-            <button onclick="processVideoClientSide()">Extract</button>
-        </div>
-        
-        <!-- This will dynamically show the extracted ID or error errors -->
-        <div id="status" class="status-msg"></div>
-    </div>
+    .container {
+        width: 100%;
+        max-width: 550px;
+        padding: 20px;
+        box-sizing: border-box;
+    }
 
-    <script>
-        function extractVideoId(url) {
-            const regExp = /^.*(?:(?:youtu\.be\/|v\/|vi\/|u\/\w\/|embed\/|shorts\/)|(?:(?:watch)?\?v(?:i)?=|\&v(?:i)?=))([^#\&\?]*).*/;
-            const match = url.match(regExp);
-            return (match && match[1].length === 11) ? match[1] : null;
-        }
+    h1 {
+        font-size: 28px;
+        font-weight: 800;
+        margin-bottom: 24px;
+        text-align: center;
+    }
 
-        function processVideoClientSide() {
-            const url = document.getElementById('videoUrl').value.trim();
-            const statusMsg = document.getElementById('status');
+    .input-group {
+        display: flex;
+        background: #192734;
+        border: 1px solid #38444d;
+        border-radius: 9999px;
+        padding: 6px 6px 6px 16px;
+    }
 
-            if (!url) {
-                statusMsg.style.color = '#e0245e'; // Red error text
-                statusMsg.innerText = 'Please paste a link first!';
-                return;
-            }
+    .input-group:focus-within {
+        border-color: #1d9bf0;
+    }
 
-            const videoId = extractVideoId(url);
-            if (!videoId) {
-                statusMsg.style.color = '#e0245e'; // Red error text
-                statusMsg.innerText = 'Invalid YouTube URL format.';
-                return;
-            }
+    .input-group input {
+        flex: 1;
+        min-width: 0;
+        background: transparent;
+        border: none;
+        outline: none;
+        color: #fff;
+        font-size: 16px;
+    }
 
-            // Display only the clean extracted data text
-            statusMsg.style.color = '#00ba7c'; // Green success text
-            statusMsg.innerText = 'Extracted Video ID: ' + videoId;
-        }
-    </script>
+    .input-group button {
+        background-color: #1d9bf0;
+        color: #fff;
+        border: none;
+        padding: 10px 24px;
+        border-radius: 9999px;
+        font-weight: 700;
+        cursor: pointer;
+    }
 
-</body>
-</html>
+    .input-group button:hover {
+        background-color: #1a8cd8;
+    }
+
+    .input-group button:disabled {
+        opacity: 0.6;
+        cursor: not-allowed;
+    }
+
+    .status-msg {
+        text-align: center;
+        margin-top: 20px;
+        color: #8899a6;
+        font-size: 16px;
+        font-weight: 500;
+    }
+
+    .error {
+        color: #e0245e;
+    }
+
+    .success {
+        color: #00ba7c;
+    }
+</style>
+
+</head> <body> <div class="container">
+<h1>Youtuber Extract</h1>
+
+<div class="input-group">
+    <input
+        type="url"
+        id="videoUrl"
+        placeholder="Paste authorized video URL here..."
+        autocomplete="off"
+    >
+
+    <button id="downloadBtn" onclick="downloadVideo()">
+        Download
+    </button>
+</div>
+
+<div id="status" class="status-msg"></div>
+
+</div> <script> async function downloadVideo() { const input = document.getElementById('videoUrl'); const button = document.getElementById('downloadBtn'); const status = document.getElementById('status'); const url = input.value.trim(); if (!url) { status.className = 'status-msg error'; status.innerText = 'Please paste a link first!'; return; } try { new URL(url); } catch { status.className = 'status-msg error'; status.innerText = 'Please enter a valid URL.'; return; } button.disabled = true; button.innerText = 'Downloading...'; status.className = 'status-msg'; status.innerText = 'Preparing your download...'; try { const response = await fetch('/download', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ url }) }); if (!response.ok) { const data = await response.json().catch(() => ({})); throw new Error(data.error || 'Download failed.'); } const blob = await response.blob(); const contentDisposition = response.headers.get('Content-Disposition'); let filename = 'video.mp4'; if (contentDisposition) { const match = contentDisposition.match( /filename="?([^"]+)"?/ ); if (match) { filename = match[1]; } } const blobUrl = window.URL.createObjectURL(blob); const link = document.createElement('a'); link.href = blobUrl; link.download = filename; document.body.appendChild(link); link.click(); link.remove(); window.URL.revokeObjectURL(blobUrl); status.className = 'status-msg success'; status.innerText = 'Download started successfully!'; } catch (error) { status.className = 'status-msg error'; status.innerText = error.message; } finally { button.disabled = false; button.innerText = 'Download'; } } document.getElementById('videoUrl').addEventListener( 'keydown', function(event) { if (event.key === 'Enter') { downloadVideo(); } } ); </script> </body> </html>
