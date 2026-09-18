@@ -1,93 +1,114 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Youtuber Extraxt</title>
-  <style>
-    body {
-      margin: 0;
-      font-family: Chirp, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-      background-color: #15202b;
-      color: #f7f9fa;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      min-height: 100vh;
-    }
-    .container { width: 100%; max-width: 550px; padding: 20px; box-sizing: border-box; }
-    h1 { font-size: 28px; font-weight: 800; margin-bottom: 24px; text-align: center; }
-    .input-group { display: flex; background: #192734; border: 1px solid #38444d; border-radius: 9999px; padding: 6px 6px 6px 16px; }
-    .input-group:focus-within { border-color: #1d9bf0; }
-    .input-group input { flex: 1; background: transparent; border: none; outline: none; color: #fff; font-size: 16px; }
-    .input-group button { background-color: #1d9bf0; color: #fff; border: none; padding: 10px 24px; border-radius: 9999px; font-weight: 700; cursor: pointer; }
-    .input-group button:hover { background-color: #1a8cd8; }
-    .preview-card { display: none; background: #192734; border: 1px solid #38444d; border-radius: 16px; margin-top: 20px; overflow: hidden; }
-    .preview-card img { width: 100%; height: auto; aspect-ratio: 16/9; object-fit: cover; }
-    .preview-info { padding: 16px; display: flex; flex-direction: column; gap: 10px; }
-    .preview-title { font-size: 16px; font-weight: 700; margin: 0; }
-    .status-msg { text-align: center; margin-top: 12px; color: #8899a6; font-size: 14px; }
-    .download-frame-box { width: 100%; border: none; height: 460px; border-radius: 12px; margin-top: 10px; background: #192734; }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Youtuber Extract</title>
+    <style>
+        body {
+            margin: 0;
+            font-family: Chirp, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            background-color: #15202b;
+            color: #f7f9fa;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+        .container {
+            width: 100%;
+            max-width: 550px;
+            padding: 20px;
+            box-sizing: border-box;
+        }
+        h1 {
+            font-size: 28px;
+            font-weight: 800;
+            margin-bottom: 24px;
+            text-align: center;
+        }
+        .input-group {
+            display: flex;
+            background: #192734;
+            border: 1px solid #38444d;
+            border-radius: 9999px;
+            padding: 6px 6px 6px 16px;
+        }
+        .input-group:focus-within {
+            border-color: #1d9bf0;
+        }
+        .input-group input {
+            flex: 1;
+            background: transparent;
+            border: none;
+            outline: none;
+            color: #fff;
+            font-size: 16px;
+        }
+        .input-group button {
+            background-color: #1d9bf0;
+            color: #fff;
+            border: none;
+            padding: 10px 24px;
+            border-radius: 9999px;
+            font-weight: 700;
+            cursor: pointer;
+        }
+        .input-group button:hover {
+            background-color: #1a8cd8;
+        }
+        .status-msg {
+            text-align: center;
+            margin-top: 20px;
+            color: #8899a6;
+            font-size: 16px;
+            font-weight: 500;
+        }
+    </style>
 </head>
 <body>
 
-<div class="container">
-  <h1>Youtuber Extraxt</h1>
-  
-  <div class="input-group">
-    <input type="text" id="videoUrl" placeholder="Paste YouTube link here...">
-    <button onclick="processVideoClientSide()">Load Video</button>
-  </div>
-
-  <div id="status" class="status-msg"></div>
-
-  <div id="previewCard" class="preview-card">
-    <img id="previewImg" src="">
-    <div class="preview-info">
-      <h3 id="previewTitle" class="preview-title">Video Stream Ready</h3>
-      <!-- Embedded generation iframe safely loads converter options -->
-      <iframe id="downloadFrame" class="download-frame-box" src=""></iframe>
+    <div class="container">
+        <h1>Youtuber Extract</h1>
+        
+        <div class="input-group">
+            <input type="text" id="videoUrl" placeholder="Paste YouTube link here...">
+            <button onclick="processVideoClientSide()">Extract</button>
+        </div>
+        
+        <!-- This will dynamically show the extracted ID or error errors -->
+        <div id="status" class="status-msg"></div>
     </div>
-  </div>
-</div>
 
-<script>
-  function extractVideoId(url) {
-    const regExp = /^.*(?:(?:youtu\.be\/|v\/|vi\/|u\/\w\/|embed\/|shorts\/)|(?:(?:watch)?\?v(?:i)?=|\&v(?:i)?=))([^#\&\?]*).*/;
-    const match = url.match(regExp);
-    return (match && match[1].length === 11) ? match[1] : null;
-  }
+    <script>
+        function extractVideoId(url) {
+            const regExp = /^.*(?:(?:youtu\.be\/|v\/|vi\/|u\/\w\/|embed\/|shorts\/)|(?:(?:watch)?\?v(?:i)?=|\&v(?:i)?=))([^#\&\?]*).*/;
+            const match = url.match(regExp);
+            return (match && match[1].length === 11) ? match[1] : null;
+        }
 
-  function processVideoClientSide() {
-    const url = document.getElementById('videoUrl').value.trim();
-    const statusMsg = document.getElementById('status');
-    const previewCard = document.getElementById('previewCard');
+        function processVideoClientSide() {
+            const url = document.getElementById('videoUrl').value.trim();
+            const statusMsg = document.getElementById('status');
 
-    if (!url) {
-      statusMsg.innerText = 'Please paste a link first!';
-      return;
-    }
+            if (!url) {
+                statusMsg.style.color = '#e0245e'; // Red error text
+                statusMsg.innerText = 'Please paste a link first!';
+                return;
+            }
 
-    const videoId = extractVideoId(url);
-    if (!videoId) {
-      statusMsg.innerText = 'Invalid YouTube URL format.';
-      return;
-    }
+            const videoId = extractVideoId(url);
+            if (!videoId) {
+                statusMsg.style.color = '#e0245e'; // Red error text
+                statusMsg.innerText = 'Invalid YouTube URL format.';
+                return;
+            }
 
-    statusMsg.innerText = 'Loading media converters...';
-    
-    // FIXED: Maps image request cleanly to YouTube's CDN server to show the cover graphic
-    document.getElementById('previewImg').src = 'https://youtube.com' + videoId + '/hqdefault.jpg';
-    document.getElementById('previewTitle').innerText = 'Video ID: ' + videoId + ' (Ready for Extraction)';
-    
-    // FIXED: Formats route to an active, secure embed converter gateway
-    const frameTarget = document.getElementById('downloadFrame');
-    frameTarget.src = 'https://y2mate.tools/' + videoId;
+            // Display only the clean extracted data text
+            statusMsg.style.color = '#00ba7c'; // Green success text
+            statusMsg.innerText = 'Extracted Video ID: ' + videoId;
+        }
+    </script>
 
-    previewCard.style.display = 'block';
-    statusMsg.innerText = 'Select your format option inside the dashboard below!';
-  }
-</script>
 </body>
 </html>
